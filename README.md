@@ -14,6 +14,14 @@ A macOS menu bar app that syncs [Claude Code](https://claude.ai/claude-code) con
 
 ## Screenshots
 
+### Claude Code → Obsidian
+
+<img src="Screenshots/Claude Code.png" width="600" alt="Claude Code">
+
+<img src="Screenshots/Obsidian.png" width="600" alt="Obsidian">
+
+### App UI
+
 <img src="Screenshots/Menu Bar.png" width="300" alt="Menu Bar">
 
 <img src="Screenshots/Setings - General.png" width="500" alt="Settings - General">
