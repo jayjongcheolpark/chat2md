@@ -1,6 +1,6 @@
 # Chat2MD
 
-A macOS menu bar app that syncs [Claude Code](https://claude.ai/claude-code) conversations to Markdown files for use with [Obsidian](https://obsidian.md) or any markdown-based note system.
+A macOS menu bar app that syncs [Claude Code](https://code.claude.com/docs/en/overview) conversations to Markdown files for use with [Obsidian](https://obsidian.md) or any markdown-based note system.
 
 ## Features
 
