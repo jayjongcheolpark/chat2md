@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.1.1] - 2026-02-04
+
+### Fixed
+- Claude provider folder name parsing for hyphenated project names (e.g., `office-20260202`)
+
 ## [1.1.0] - 2026-02-01
 
 ### Added

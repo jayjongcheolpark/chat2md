@@ -223,10 +223,35 @@ class ClaudeProvider: Provider {
     }
 
     private func resolveFromFolderName(_ folderName: String) -> String {
-        // Convert dashes back to path separators
-        let pathString = folderName.replacingOccurrences(of: "-", with: "/")
-        // Return last path component
-        return URL(fileURLWithPath: pathString).lastPathComponent
+        // If doesn't start with dash, it's already the project name
+        guard folderName.hasPrefix("-") else {
+            return folderName
+        }
+
+        // Split by dash and progressively build path
+        let components = folderName.split(separator: "-", omittingEmptySubsequences: false)
+        var pathSoFar = ""
+        var remainingStartIndex = 1  // Skip first empty element
+
+        for i in 1..<components.count {
+            let nextPath = pathSoFar + "/" + components[i]
+            var isDirectory: ObjCBool = false
+            if FileManager.default.fileExists(atPath: nextPath, isDirectory: &isDirectory),
+               isDirectory.boolValue {
+                pathSoFar = nextPath
+                remainingStartIndex = i + 1
+            } else {
+                break
+            }
+        }
+
+        // Join remaining components with dash as project name
+        if remainingStartIndex < components.count {
+            return components[remainingStartIndex...].joined(separator: "-")
+        }
+
+        // All components were path, return last one
+        return String(components.last ?? "")
     }
 
     private func loadSessionIndex(at path: String) -> SessionIndex? {
