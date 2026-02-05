@@ -47,29 +47,31 @@ class ProjectNameResolver {
             return folderName
         }
 
-        // Split by dash and progressively build path
+        // Split by dash and try different split points to find valid path + project
         let components = folderName.split(separator: "-", omittingEmptySubsequences: false)
-        var pathSoFar = ""
-        var remainingStartIndex = 1  // Skip first empty element
 
-        for i in 1..<components.count {
-            let nextPath = pathSoFar + "/" + components[i]
+        // Try progressively longer paths until we find one where the full path exists
+        // This handles hyphenated project names like "project-ror"
+        for splitPoint in (1..<components.count).reversed() {
+            let pathComponents = components[1...splitPoint]
+            let projectComponents = components[(splitPoint + 1)...]
+
+            // Build the candidate path
+            let candidatePath = "/" + pathComponents.joined(separator: "/")
+
+            // Build the full path including project name with dashes
+            let projectName = projectComponents.joined(separator: "-")
+            let fullPath = projectName.isEmpty ? candidatePath : candidatePath + "/" + projectName
+
             var isDirectory: ObjCBool = false
-            if FileManager.default.fileExists(atPath: nextPath, isDirectory: &isDirectory),
+            if FileManager.default.fileExists(atPath: fullPath, isDirectory: &isDirectory),
                isDirectory.boolValue {
-                pathSoFar = nextPath
-                remainingStartIndex = i + 1
-            } else {
-                break
+                // Found the valid path - return project name (or last path component if no project)
+                return projectName.isEmpty ? String(components[splitPoint]) : projectName
             }
         }
 
-        // Join remaining components with dash as project name
-        if remainingStartIndex < components.count {
-            return components[remainingStartIndex...].joined(separator: "-")
-        }
-
-        // All components were path, return last one
+        // Fallback: return last component
         return String(components.last ?? "")
     }
 
