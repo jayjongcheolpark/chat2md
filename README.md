@@ -47,7 +47,7 @@ A macOS menu bar app that syncs AI CLI conversations to Markdown files for use w
 - At least one supported CLI installed (Claude Code, Gemini CLI, or Codex CLI)
 
 ### Download
-1. Download `Chat2MD-v1.1.1.zip` from [Releases](https://github.com/jayjongcheolpark/chat2md/releases)
+1. Download `Chat2MD-v1.1.2.zip` from [Releases](https://github.com/jayjongcheolpark/chat2md/releases)
 2. Extract and move `Chat2MD.app` to `/Applications`
 3. **Important**: The app is not notarized, so you need to bypass Gatekeeper:
 

@@ -15,7 +15,6 @@
 		1A1111111111111111111116 /* SyncHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A1111111111111111111116 /* SyncHistory.swift */; };
 		1A1111111111111111111117 /* JSONLParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A1111111111111111111117 /* JSONLParser.swift */; };
 		1A1111111111111111111118 /* MarkdownConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A1111111111111111111118 /* MarkdownConverter.swift */; };
-		1A1111111111111111111119 /* ProjectNameResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A1111111111111111111119 /* ProjectNameResolver.swift */; };
 		1A111111111111111111111A /* SyncHistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A111111111111111111111A /* SyncHistoryStore.swift */; };
 		1A111111111111111111111B /* LaunchAgentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A111111111111111111111B /* LaunchAgentManager.swift */; };
 		1A111111111111111111111C /* SyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A111111111111111111111C /* SyncService.swift */; };
@@ -43,7 +42,6 @@
 		2A1111111111111111111116 /* SyncHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncHistory.swift; sourceTree = "<group>"; };
 		2A1111111111111111111117 /* JSONLParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONLParser.swift; sourceTree = "<group>"; };
 		2A1111111111111111111118 /* MarkdownConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownConverter.swift; sourceTree = "<group>"; };
-		2A1111111111111111111119 /* ProjectNameResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectNameResolver.swift; sourceTree = "<group>"; };
 		2A111111111111111111111A /* SyncHistoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncHistoryStore.swift; sourceTree = "<group>"; };
 		2A111111111111111111111B /* LaunchAgentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAgentManager.swift; sourceTree = "<group>"; };
 		2A111111111111111111111C /* SyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncService.swift; sourceTree = "<group>"; };
@@ -148,7 +146,6 @@
 			children = (
 				2A1111111111111111111117 /* JSONLParser.swift */,
 				2A1111111111111111111118 /* MarkdownConverter.swift */,
-				2A1111111111111111111119 /* ProjectNameResolver.swift */,
 				2A111111111111111111111A /* SyncHistoryStore.swift */,
 				2A111111111111111111111B /* LaunchAgentManager.swift */,
 				2A111111111111111111111C /* SyncService.swift */,
@@ -260,7 +257,6 @@
 				1A1111111111111111111126 /* CodexProvider.swift in Sources */,
 				1A1111111111111111111117 /* JSONLParser.swift in Sources */,
 				1A1111111111111111111118 /* MarkdownConverter.swift in Sources */,
-				1A1111111111111111111119 /* ProjectNameResolver.swift in Sources */,
 				1A111111111111111111111A /* SyncHistoryStore.swift in Sources */,
 				1A111111111111111111111B /* LaunchAgentManager.swift in Sources */,
 				1A111111111111111111111C /* SyncService.swift in Sources */,
@@ -411,7 +407,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jaypark.chat2md;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -439,7 +435,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jaypark.chat2md;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

@@ -3,6 +3,18 @@ import Foundation
 class CodexProvider: Provider {
     let type: ProviderType = .codex
 
+    // Patterns to skip (system/tool messages)
+    private let systemMessagePatterns = [
+        "<turn_aborted>"
+    ]
+
+    // XML-like tags whose content should be stripped from messages
+    private let stripTagPatterns = [
+        "<skill>[\\s\\S]*?</skill>",
+        "<system-reminder>[\\s\\S]*?</system-reminder>",
+        "<proposed_plan>[\\s\\S]*?</proposed_plan>"
+    ]
+
     func findSessionFiles(in basePath: String, maxAge: TimeInterval) throws -> [SessionFile] {
         let fm = FileManager.default
         let cutoffDate = Date().addingTimeInterval(-maxAge)
@@ -104,7 +116,14 @@ class CodexProvider: Provider {
                     if msgDate < filterDate { continue }
                 }
 
-                guard let text = codexMsg.textContent, !text.isEmpty else { continue }
+                guard var text = codexMsg.textContent, !text.isEmpty else { continue }
+
+                // Strip system tags (e.g. <skill>...</skill>)
+                text = stripSystemTags(text)
+                guard !text.isEmpty else { continue }
+
+                // Skip system messages
+                if shouldSkipMessage(text) { continue }
 
                 let role: ConversationMessage.MessageRole = codexMsg.isUserMessage ? .user : .assistant
 
@@ -161,5 +180,28 @@ class CodexProvider: Provider {
 
     func clearCache() {
         // Codex provider doesn't use caching
+    }
+
+    private func shouldSkipMessage(_ text: String) -> Bool {
+        for pattern in systemMessagePatterns {
+            if text.contains(pattern) {
+                return true
+            }
+        }
+        return false
+    }
+
+    private func stripSystemTags(_ text: String) -> String {
+        var result = text
+        for pattern in stripTagPatterns {
+            if let regex = try? NSRegularExpression(pattern: pattern, options: []) {
+                result = regex.stringByReplacingMatches(
+                    in: result,
+                    range: NSRange(result.startIndex..., in: result),
+                    withTemplate: ""
+                )
+            }
+        }
+        return result.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

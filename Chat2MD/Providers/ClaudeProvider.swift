@@ -16,6 +16,12 @@ class ClaudeProvider: Provider {
         "<local-command-caveat>"
     ]
 
+    // XML-like tags whose content should be stripped from messages
+    private let stripTagPatterns = [
+        "<skill>[\\s\\S]*?</skill>",
+        "<proposed_plan>[\\s\\S]*?</proposed_plan>"
+    ]
+
     // MARK: - Session Index for project name resolution
 
     struct SessionIndex: Codable {
@@ -114,7 +120,11 @@ class ClaudeProvider: Provider {
 
                 let role: ConversationMessage.MessageRole = message.isUserMessage ? .user : .assistant
 
-                for text in textBlocks {
+                for var text in textBlocks {
+                    guard !text.isEmpty else { continue }
+
+                    // Strip system tags (e.g. <skill>...</skill>)
+                    text = stripSystemTags(text)
                     guard !text.isEmpty else { continue }
 
                     // Skip system messages
@@ -222,36 +232,29 @@ class ClaudeProvider: Provider {
         return false
     }
 
+    private func stripSystemTags(_ text: String) -> String {
+        var result = text
+        for pattern in stripTagPatterns {
+            if let regex = try? NSRegularExpression(pattern: pattern, options: []) {
+                result = regex.stringByReplacingMatches(
+                    in: result,
+                    range: NSRange(result.startIndex..., in: result),
+                    withTemplate: ""
+                )
+            }
+        }
+        return result.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
     private func resolveFromFolderName(_ folderName: String) -> String {
-        // If doesn't start with dash, it's already the project name
+        // Fallback when sessions-index.json is unavailable.
+        // Folder names encode paths with dashes (e.g. "-Users-jay-Dev-project"),
+        // but this is lossy — don't attempt to reconstruct the path.
         guard folderName.hasPrefix("-") else {
             return folderName
         }
-
-        // Split by dash and progressively build path
         let components = folderName.split(separator: "-", omittingEmptySubsequences: false)
-        var pathSoFar = ""
-        var remainingStartIndex = 1  // Skip first empty element
-
-        for i in 1..<components.count {
-            let nextPath = pathSoFar + "/" + components[i]
-            var isDirectory: ObjCBool = false
-            if FileManager.default.fileExists(atPath: nextPath, isDirectory: &isDirectory),
-               isDirectory.boolValue {
-                pathSoFar = nextPath
-                remainingStartIndex = i + 1
-            } else {
-                break
-            }
-        }
-
-        // Join remaining components with dash as project name
-        if remainingStartIndex < components.count {
-            return components[remainingStartIndex...].joined(separator: "-")
-        }
-
-        // All components were path, return last one
-        return String(components.last ?? "")
+        return String(components.last ?? Substring(folderName))
     }
 
     private func loadSessionIndex(at path: String) -> SessionIndex? {

@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.2] - 2026-02-05
+
+### Fixed
+- Remove lossy folder name parsing in Claude provider; rely on `sessions-index.json` as sole source of truth for project names
+- Strip `<proposed_plan>` tags from Claude and Codex conversation output
+
+### Removed
+- Unused `ProjectNameResolver.swift`
+
 ## [1.1.1] - 2026-02-04
 
 ### Fixed
