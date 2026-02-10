@@ -52,18 +52,6 @@ class CodexProvider: Provider {
 
         let contents = try fm.contentsOfDirectory(atPath: folderPath)
 
-        // Check if this is a leaf folder (contains .jsonl files)
-        let hasJsonlFiles = contents.contains { $0.hasSuffix(".jsonl") }
-
-        // Only check folder date on leaf folders (intermediate folders like YYYY/MM don't update)
-        if hasJsonlFiles {
-            if let folderAttrs = try? fm.attributesOfItem(atPath: folderPath),
-               let folderModDate = folderAttrs[.modificationDate] as? Date,
-               folderModDate < cutoffDate {
-                return []
-            }
-        }
-
         for item in contents {
             let itemPath = (folderPath as NSString).appendingPathComponent(item)
             var isDir: ObjCBool = false

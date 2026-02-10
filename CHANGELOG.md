@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.3] - 2026-02-10
+
+### Fixed
+- Codex provider no longer skips active sessions due to stale leaf-folder (`YYYY/MM/DD`) modification timestamps
+- Message date filtering now uses sync `Session Max Age` cutoff instead of always using today's midnight
+- Claude project name resolution now falls back to `cwd` from session JSONL when `sessions-index.json` is missing
+- Claude folder-name fallback preserves common `*-YYYYMMDD` project suffixes (e.g. `projects-20260209`)
+
 ## [1.1.2] - 2026-02-05
 
 ### Fixed

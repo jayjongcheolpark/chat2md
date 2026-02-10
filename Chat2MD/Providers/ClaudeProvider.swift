@@ -167,6 +167,11 @@ class ClaudeProvider: Provider {
             }
         }
 
+        // Fallback: extract cwd from session file content
+        if let cwd = resolveCWDFromSessionFile(at: file.path) {
+            return URL(fileURLWithPath: cwd).lastPathComponent
+        }
+
         // Fallback: use folder name parsing
         let folderName = projectFolder.lastPathComponent
         return resolveFromFolderName(folderName)
@@ -184,6 +189,9 @@ class ClaudeProvider: Provider {
         if let index = loadSessionIndex(at: indexPath.path),
            let entry = index.entries.first(where: { $0.sessionId == sessionId }) {
             cwd = entry.projectPath
+        }
+        if cwd == nil {
+            cwd = resolveCWDFromSessionFile(at: file.path)
         }
 
         return SessionMetadata(sessionId: shortSessionId, workingDirectory: cwd)
@@ -249,12 +257,45 @@ class ClaudeProvider: Provider {
     private func resolveFromFolderName(_ folderName: String) -> String {
         // Fallback when sessions-index.json is unavailable.
         // Folder names encode paths with dashes (e.g. "-Users-jay-Dev-project"),
-        // but this is lossy — don't attempt to reconstruct the path.
+        // so extract a best-effort project token from the tail.
         guard folderName.hasPrefix("-") else {
             return folderName
         }
-        let components = folderName.split(separator: "-", omittingEmptySubsequences: false)
-        return String(components.last ?? Substring(folderName))
+        let components = folderName
+            .split(separator: "-", omittingEmptySubsequences: true)
+            .map(String.init)
+
+        guard let last = components.last else { return folderName }
+
+        // Preserve common "*-YYYYMMDD" suffixes (e.g. "projects-20260209")
+        if components.count >= 2,
+           last.count == 8,
+           last.allSatisfy({ $0.isNumber }) {
+            return "\(components[components.count - 2])-\(last)"
+        }
+
+        return last
+    }
+
+    private func resolveCWDFromSessionFile(at path: String) -> String? {
+        guard let content = try? String(contentsOfFile: path, encoding: .utf8) else {
+            return nil
+        }
+
+        // Some files start with snapshot/system rows. Scan early lines for cwd.
+        for line in content.split(separator: "\n").prefix(200) {
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            if trimmed.isEmpty { continue }
+            guard let data = String(trimmed).data(using: .utf8),
+                  let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let cwd = obj["cwd"] as? String,
+                  !cwd.isEmpty else {
+                continue
+            }
+            return cwd
+        }
+
+        return nil
     }
 
     private func loadSessionIndex(at path: String) -> SessionIndex? {

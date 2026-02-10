@@ -47,7 +47,7 @@ A macOS menu bar app that syncs AI CLI conversations to Markdown files for use w
 - At least one supported CLI installed (Claude Code, Gemini CLI, or Codex CLI)
 
 ### Download
-1. Download `Chat2MD-v1.1.2.zip` from [Releases](https://github.com/jayjongcheolpark/chat2md/releases)
+1. Download `Chat2MD-v1.1.3.zip` from [Releases](https://github.com/jayjongcheolpark/chat2md/releases)
 2. Extract and move `Chat2MD.app` to `/Applications`
 3. **Important**: The app is not notarized, so you need to bypass Gatekeeper:
 
@@ -117,7 +117,7 @@ The app uses smart optimization to minimize disk I/O:
 |----------|----------|
 | Claude Code | Skip project folders not modified since cutoff |
 | Gemini CLI | Skip hash folders not modified since cutoff |
-| Codex CLI | Skip only leaf folders (DD in YYYY/MM/DD structure) |
+| Codex CLI | Recursively scan dated folders, then filter by session file modification time |
 
 **Incremental Parsing**:
 - Tracks last synced line number per session file
@@ -181,7 +181,10 @@ Response here
 Ensure there's a blank line before tables in your markdown viewer. Chat2MD automatically adds this.
 
 ### Project name is wrong
-The app uses the `projectPath` from Claude's `sessions-index.json`. The last folder name is used as the project name.
+For Claude Code sessions, Chat2MD resolves project name in this order:
+1. `sessions-index.json` `projectPath` (if present)
+2. `cwd` found in the session `.jsonl` content
+3. Encoded Claude folder name fallback
 
 ## Development
 

@@ -140,6 +140,7 @@ class SyncService: ObservableObject {
         } else {
             maxAge = Double(settings.sessionMaxAgeMinutes) * 60
         }
+        let messageCutoffDate = Date().addingTimeInterval(-maxAge)
 
         // Sync each enabled provider
         for provider in enabledProviders {
@@ -167,7 +168,7 @@ class SyncService: ObservableObject {
                     let lastLine = syncState.getLastLine(for: file.path)
 
                     // Parse only new messages
-                    let result = provider.parseMessages(from: file, afterLine: lastLine, since: todayStart)
+                    let result = provider.parseMessages(from: file, afterLine: lastLine, since: messageCutoffDate)
 
                     // Skip if no new messages
                     guard !result.messages.isEmpty else {
