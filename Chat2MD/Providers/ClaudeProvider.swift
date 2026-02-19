@@ -51,13 +51,6 @@ class ClaudeProvider: Provider {
             var isDir: ObjCBool = false
             guard fm.fileExists(atPath: folderPath, isDirectory: &isDir), isDir.boolValue else { continue }
 
-            // Skip folder if not modified since cutoff (folder mtime updates when files inside change)
-            if let folderAttrs = try? fm.attributesOfItem(atPath: folderPath),
-               let folderModDate = folderAttrs[.modificationDate] as? Date,
-               folderModDate < cutoffDate {
-                continue
-            }
-
             let files = try findJSONLFiles(in: folderPath, excludingSubagents: true)
 
             for filePath in files {

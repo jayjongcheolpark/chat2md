@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.1.4] - 2026-02-19
+
+### Fixed
+- Claude provider now scans all Claude project folders and filters by session file modification time, preventing missed active sessions when folder mtime is stale
+- Claude parser now extracts user text from array-based content blocks, so user prompts in newer Claude JSONL format are no longer dropped
+
 ## [1.1.3] - 2026-02-10
 
 ### Fixed

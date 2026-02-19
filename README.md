@@ -16,7 +16,7 @@ A macOS menu bar app that syncs AI CLI conversations to Markdown files for use w
 - **Automatic Sync**: Periodically syncs new conversations (configurable interval: 5s - 5min)
 - **Incremental Updates**: Only syncs new messages, not entire conversations
 - **YAML Frontmatter**: Metadata for Obsidian (date wikilink, provider, project, session, cwd)
-- **Smart Optimization**: Uses folder modification time to skip unchanged directories
+- **Smart Optimization**: Uses provider-specific file/folder filtering to reduce scan cost without missing active sessions
 - **Menu Bar Toggles**: Enable/disable each provider without opening Settings
 - **Launch at Login**: Optionally start automatically when you log in
 - **Status Graph**: Visual history of recent sync operations per provider
@@ -47,7 +47,7 @@ A macOS menu bar app that syncs AI CLI conversations to Markdown files for use w
 - At least one supported CLI installed (Claude Code, Gemini CLI, or Codex CLI)
 
 ### Download
-1. Download `Chat2MD-v1.1.3.zip` from [Releases](https://github.com/jayjongcheolpark/chat2md/releases)
+1. Download `Chat2MD-v1.1.4.zip` from [Releases](https://github.com/jayjongcheolpark/chat2md/releases)
 2. Extract and move `Chat2MD.app` to `/Applications`
 3. **Important**: The app is not notarized, so you need to bypass Gatekeeper:
 
@@ -109,13 +109,13 @@ The app uses smart optimization to minimize disk I/O:
 
 **Warm Sync** (continuous operation):
 - Only checks files modified within **Session Max Age** (default: 1 hour)
-- Skips folders whose modification date is older than cutoff
+- Uses provider-specific cutoff filtering (file-level for Claude/Codex, folder-level where reliable)
 - Significantly reduces scanning for large session directories
 
 **Folder-level Optimization**:
 | Provider | Strategy |
 |----------|----------|
-| Claude Code | Skip project folders not modified since cutoff |
+| Claude Code | Scan project folders, then filter session files by modification time |
 | Gemini CLI | Skip hash folders not modified since cutoff |
 | Codex CLI | Recursively scan dated folders, then filter by session file modification time |
 

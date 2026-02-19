@@ -66,29 +66,14 @@ struct ClaudeMessage: Codable {
         return type == "assistant"
     }
 
-    /// For user messages: only return content if it's a plain string (not tool_result array)
-    /// For assistant messages: extract text from content blocks with type == "text"
+    /// Return joined text blocks for user/assistant messages.
     var textContent: String? {
-        guard let content = message?.content else { return nil }
-
-        switch content {
-        case .string(let str):
-            // User text messages have string content
-            return isUserMessage ? str : nil
-        case .array(let blocks):
-            // Assistant messages have array of content blocks
-            guard isAssistantMessage else { return nil }
-            let texts = blocks.compactMap { block -> String? in
-                if block.type == "text" {
-                    return block.text
-                }
-                return nil
-            }
-            return texts.isEmpty ? nil : texts.joined(separator: "\n")
-        }
+        let blocks = textBlocks
+        return blocks.isEmpty ? nil : blocks.joined(separator: "\n")
     }
 
-    /// For assistant messages: return each text block separately (like shell script)
+    /// Return each text block separately (user and assistant).
+    /// Ignores non-text blocks like tool_use/tool_result.
     var textBlocks: [String] {
         guard let content = message?.content else { return [] }
 
@@ -97,8 +82,8 @@ struct ClaudeMessage: Codable {
             // User text messages have string content
             return isUserMessage ? [str] : []
         case .array(let blocks):
-            // Assistant messages have array of content blocks
-            guard isAssistantMessage else { return [] }
+            // Both user and assistant can contain text blocks in array form.
+            guard isUserMessage || isAssistantMessage else { return [] }
             return blocks.compactMap { block -> String? in
                 if block.type == "text" {
                     return block.text
